@@ -50,9 +50,10 @@ function markBox(evt) {
     // ---------------------------Set player turns ---------------------------------//       
     evt.target.innerText = players[turn]
 
-    if (turn === 0) {                               // Set player X
+    if (turn === 0) {  
+        console.log(turn)                             // Set player X
         xMoves.push(evt.target.getAttribute('id'));
-        turn = 1;
+        //turn = 1;
         xMoves.sort();
 
         xMovesString = xMoves.toString()
@@ -61,28 +62,36 @@ function markBox(evt) {
     } else {                                        // Set player O
 
         oMoves.push(evt.target.getAttribute('id'));
-        turn = 0;
+        //turn = 0;
         oMoves.sort();
         oMovesString = oMoves.toString()
 
 
     }
-    if (checkWin(oMovesString)|| checkWin(xMovesString)) {
-        return;
+    if ((xMovesString !== null && checkWin(xMovesString)) ||
+        (oMovesString !== null && checkWin(oMovesString))) {
+        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'      // status text update
+       return;
+   } 
+    console.log('got here')
+    if (turn === 0) {
+        turn = 1;
     } else {
-        statusText.innerHTML = 'It\'s player ' + players[turn] + ' turn!'      // status text update
+        turn = 0;
     }
-        
-    
-   
+    statusText.innerHTML = 'It\'s player ' + players[turn] + ' turn!'      // status text update
+
+
+
+
 }
- // ---------------------------Check Win function ---------------------------------//   
+// ---------------------------Check Win function ---------------------------------//   
 function checkWin(movesString) {
     for (pattern of winningPatterns) {
         console.log(pattern)
         if (movesString.includes(pattern)) {
 
-            statusText.innerText = 'Winner!'
+
             return true
         }
 
