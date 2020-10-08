@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    font-size: 24pt
+    
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: 61vh;
+    width: 61vw;
+    background-color: red;
+}
+
+.cell {
+    border: 1px solid black;
+    height: 20vh;
+    width: 20vw;
+}
+
+#status-text {
+    display: flex;
+    height: 20vh;
+    width: 20vw;
+    border: 1px solid green
+}
+
+/*#button-wrapper {
+    display: flex;
+    border: 1px solid green
+}*/
+
+#start {
+   
+}
