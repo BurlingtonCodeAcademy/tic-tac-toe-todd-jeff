@@ -32,14 +32,30 @@ let xMovesString = null;
 let elapsedTime = null;
 
 
+let gameMode = ''
+
+
+
 function startGame() {
+
 
     // Set turn so X player goes first and 
     turn = 0
 
+    // This is how we determine game mode
+    gameMode = document.querySelector('input[name=game-mode]:checked').value
+
     // set player names based on input
     players[0] = document.getElementById('x-player').value
-    players[1] = document.getElementById('o-player').value
+    console.log(gameMode)
+
+    // Computer Assignment if playing VS computer 
+    if (gameMode === 'PvC') {
+        players[1] = 'Computer'
+        document.getElementById('o-player').value = 'Computer'
+    } else {
+        players[1] = document.getElementById('o-player').value
+    }
 
     // Set Status Text so players know whos turn it is
     if (players[0] !== '' && players[1] !== '') {
@@ -70,13 +86,19 @@ function startGame() {
 }
 
 function markBox(evt) {
-
+    console.log('at top')
     // Prevent player from trying to pick a box that is already filled
     if (evt.target.innerText !== '') {
         statusText.innerText = 'Please pick a vacant cell'
         return
     }
-
+    /* if (players[1] === 'Computer' && turn === 1) {
+     let randMoves = randNum(9)
+     console.log(randMoves)
+     compMoves = document.getElementById(randMoves.toString()).innerText = 'O'
+     console.log(compMoves)
+     } else {
+ */
     // Fill in box with X or O based on which player
     evt.target.innerText = (turn === 0 ? 'X' : 'O')
 
@@ -92,8 +114,8 @@ function markBox(evt) {
         (oMoves.length > 0 && checkWin(oMoves))) {
 
         // Display winner name in status area and re-enable start button
-        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'      
-        
+        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
+
         window.clearInterval(elapsedTime)
         startButton.disabled = false;
 
@@ -106,12 +128,32 @@ function markBox(evt) {
         turn = 0;
         statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
     }
+    if (gameMode === 'PvC') {
+        computerMove();
+    }
+
+    console.log('at bottom')
 }
+
+function computerMove() {
+
+    let randMoves = randNum(9)
+    console.log()
+    console.log(document.getElementById(randMoves.toString()).innerText)
+    if (document.getElementById(randMoves.toString()).innerText === '') {
+        compMoves = document.getElementById(randMoves.toString()).innerText = 'O'
+
+        console.log(compMoves)
+    }
+}
+
+
+
 
 // Check to see if player move combinations match one of the winning move combinations
 function checkWin(movesString) {
     movesString.sort()
-    let checkString =  movesString.toString()
+    let checkString = movesString.toString()
 
     for (pattern of winningPatterns) {
         if (checkString.includes(pattern)) {
@@ -134,11 +176,19 @@ function updateElapsedTime(startTime) {
     let timeDiff = endTime.getTime() - startTime.getTime()
 
     // convert to miliseconds
-    timeDiff = timeDiff/1000
+    timeDiff = timeDiff / 1000
 
     // calculate elapsed time in minutes and seconds
     let seconds = Math.floor(timeDiff)
-    let minutes = Math.floor(((timeDiff/60) ) %60)
+    let minutes = Math.floor(((timeDiff / 60)) % 60)
 
     timer.innerHTML = 'Time Elapsed: ' + seconds + ' seconds'
+}
+
+
+function randNum(max) {
+    rand = Math.floor(Math.random() * Math.floor(max))
+
+
+    return rand
 }
