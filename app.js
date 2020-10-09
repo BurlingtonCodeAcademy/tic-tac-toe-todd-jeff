@@ -85,7 +85,7 @@ function markBox(evt) {
         (oMoves.length > 0 && checkWin(oMoves))) {
 
         // Display winner name in status area and re-enable start button
-        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'      // status text update
+        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'      
         startButton.disabled = false;
 
     }
