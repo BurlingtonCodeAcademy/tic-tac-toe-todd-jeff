@@ -136,8 +136,8 @@ function updateElapsedTime(startTime) {
     timeDiff = timeDiff/1000
 
     // calculate elapsed time in minutes and seconds
-    let seconds = Math.floor(timeDiff % 60)
+    let seconds = Math.floor(timeDiff)
     let minutes = Math.floor(((timeDiff/60) ) %60)
 
-    timer.innerHTML = 'Seconds ' + seconds
+    timer.innerHTML = 'Time Elapsed: ' + seconds + ' seconds'
 }
