@@ -1,4 +1,3 @@
-
 // Global Variables to setup game
 let players = []
 let turn = 0
@@ -14,9 +13,10 @@ let winningPatterns =
         '1,4,7', '2,5,8', '3,6,9',  // vertical wins
         '1,5,9', '3,5,7']           // diagonal winds
 
-// get DOM object associated with start button, status area
+// get DOM object associated with start button, status area, timer
 let startButton = document.getElementById('start')
 let statusText = document.getElementById('status-text')
+let timer = document.getElementById('timer')
 
 // get collection of DOM objects associated with each box on grid 
 let boxes = document.getElementsByClassName('cell')
@@ -27,6 +27,9 @@ startButton.addEventListener('click', startGame)
 // setup strings that will be used to check to see if player has won
 let oMovesString = null;
 let xMovesString = null;
+
+// setup var for elapsed time
+let elapsedTime = null;
 
 
 function startGame() {
@@ -58,6 +61,10 @@ function startGame() {
         boxElement.style.backgroundColor = 'lightcyan'
     }
 
+    // Setup timer to show elapsed time of game
+    var startDate = new Date()
+    elapsedTime = window.setInterval(updateElapsedTime, 1000, startDate)
+
     // disable start button
     startButton.disabled = true
 }
@@ -86,6 +93,8 @@ function markBox(evt) {
 
         // Display winner name in status area and re-enable start button
         statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'      
+        
+        window.clearInterval(elapsedTime)
         startButton.disabled = false;
 
     }
@@ -102,10 +111,10 @@ function markBox(evt) {
 // Check to see if player move combinations match one of the winning move combinations
 function checkWin(movesString) {
     movesString.sort()
-    movesString = oMoves.toString()
+    let checkString =  movesString.toString()
 
     for (pattern of winningPatterns) {
-        if (movesString.includes(pattern)) {
+        if (checkString.includes(pattern)) {
             highlightWinningBoxes(pattern)
             return true
         }
@@ -118,4 +127,18 @@ function highlightWinningBoxes(pattern) {
     for (box of winningBoxes) {
         document.getElementById(box).style.backgroundColor = 'red'
     }
+}
+
+function updateElapsedTime(startTime) {
+    let endTime = new Date()
+    let timeDiff = endTime.getTime() - startTime.getTime()
+
+    // convert to miliseconds
+    timeDiff = timeDiff/1000
+
+    // calculate elapsed time in minutes and seconds
+    let seconds = Math.floor(timeDiff)
+    let minutes = Math.floor(((timeDiff/60) ) %60)
+
+    timer.innerHTML = 'Time Elapsed: ' + seconds + ' seconds'
 }
