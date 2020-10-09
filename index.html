@@ -10,6 +10,16 @@
 
 <body>
   <h1>Tic Tac Toe!</h1>
+
+  <div>
+    <label for="x-player">X Player:</label>
+    <input type="text" id="x-player" placeholder="Name">
+    <label for="o-player">O Player:</label>
+    <input type="text" id="o-player" placeholder="Name">
+  </div>
+
+  <div id='status-text'></div>
+
   <div id='board'>
     <div class='cell' id='1'></div>
     <div class='cell' id='2'></div>
@@ -21,13 +31,9 @@
     <div class='cell' id='8'></div>
     <div class='cell' id='9'></div>
   </div>
-  <div id='status-text'>
 
-  </div>
   <div id='button-wrapper'>
-    <button id='start'>Start Game
-
-    </button>
+    <button id='start'>Start Game</button>
   </div>
 
   <script src='app.js'>

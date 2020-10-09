@@ -1,121 +1,121 @@
-let players = ['X', 'O']
-let turn = 0;
 
+// Global Variables to setup game
+let players = []
+let turn = 0
+let winningPattern = ''
+
+// Use arrays to record the moves that each player makes
 let xMoves = []
 let oMoves = []
 
+// use array to track winning box combinations
+let winningPatterns =
+    ['1,2,3', '4,5,6', '7,8,9',     // horizontal wins
+        '1,4,7', '2,5,8', '3,6,9',  // vertical wins
+        '1,5,9', '3,5,7']           // diagonal winds
+
+// get DOM object associated with start button, status area
 let startButton = document.getElementById('start')
 let statusText = document.getElementById('status-text')
 
-let winningPatterns = ['1,2,3', '4,5,6', '7,8,9', '1,4,7', '2,5,8', '3,6,9', '1,5,9',
-    '3,5,7']
+// get collection of DOM objects associated with each box on grid 
+let boxes = document.getElementsByClassName('cell')
+
+// setup listener on start button to detect click
+startButton.addEventListener('click', startGame)
+
+// setup strings that will be used to check to see if player has won
 let oMovesString = null;
 let xMovesString = null;
 
 
-startButton.addEventListener('click', startGame)
-
-// ---------------------------Our Start Game  -------------------------//
 function startGame() {
-    statusText.innerHTML = 'It\'s player' + players[0] + ' turn'
-    startButton.disabled = true;
 
+    // Set turn so X player goes first and 
+    turn = 0
 
-    //  ---------------------------Our Cell's loop -------------------------//
-    for (boxElementX of boxes) {
+    // set player names based on input
+    players[0] = document.getElementById('x-player').value
+    players[1] = document.getElementById('o-player').value
 
-        boxElementX.addEventListener('click', markBox)
+    // Set Status Text so players know whos turn it is
+    if (players[0] !== '' && players[1] !== '') {
+        statusText.innerHTML = 'It\'s ' + players[turn] + ' turn'
+    }
+    else {
+        statusText.innerHTML = 'You must fill in the players names before you can play!'
+        return;
     }
 
+    // clear the board of an Xs or Os and clear out any moves from prior game
+    xMoves = []
+    oMoves = []
+
+    for (boxElement of boxes) {
+        boxElement.removeEventListener('click', markBox)
+        boxElement.innerHTML = ''
+        boxElement.addEventListener('click', markBox)
+        boxElement.style.backgroundColor = 'lightcyan'
+    }
+
+    // disable start button
+    startButton.disabled = true
 }
-//  ---------------------------Our Cells -------------------------//
-
-
-let boxes = document.getElementsByClassName('cell');
-
-
-
-
-
-
 
 function markBox(evt) {
 
-    // ---------------------------Check if vacant cell ---------------------------------//
+    // Prevent player from trying to pick a box that is already filled
     if (evt.target.innerText !== '') {
         statusText.innerText = 'Please pick a vacant cell'
         return
     }
 
-    // ---------------------------Set player turns ---------------------------------//       
-    evt.target.innerText = players[turn]
+    // Fill in box with X or O based on which player
+    evt.target.innerText = (turn === 0 ? 'X' : 'O')
 
-    if (turn === 0) {  
-        console.log(turn)                             // Set player X
-        xMoves.push(evt.target.getAttribute('id'));
-        //turn = 1;
-        xMoves.sort();
+    // store player moves in array so we can use to check for win condition
+    if (turn === 0) {
+        xMoves.push(evt.target.getAttribute('id'))
+    } else {
+        oMoves.push(evt.target.getAttribute('id'))
+    }
 
-        xMovesString = xMoves.toString()
+    // Check for win condition
+    if ((xMoves.length > 0 && checkWin(xMoves)) ||
+        (oMoves.length > 0 && checkWin(oMoves))) {
 
-
-    } else {                                        // Set player O
-
-        oMoves.push(evt.target.getAttribute('id'));
-        //turn = 0;
-        oMoves.sort();
-        oMovesString = oMoves.toString()
-
+        // Display winner name in status area and re-enable start button
+        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'      // status text update
+        startButton.disabled = false;
 
     }
-    if ((xMovesString !== null && checkWin(xMovesString)) ||
-        (oMovesString !== null && checkWin(oMovesString))) {
-        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'      // status text update
-       return;
-   } 
-    console.log('got here')
-    if (turn === 0) {
+    // If not in a win condition, Update turn to next player
+    else if (turn === 0) {
         turn = 1;
+        statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
     } else {
         turn = 0;
+        statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
     }
-    statusText.innerHTML = 'It\'s player ' + players[turn] + ' turn!'      // status text update
-
-
-
-
 }
-// ---------------------------Check Win function ---------------------------------//   
+
+// Check to see if player move combinations match one of the winning move combinations
 function checkWin(movesString) {
+    movesString.sort()
+    movesString = oMoves.toString()
+
     for (pattern of winningPatterns) {
-        console.log(pattern)
         if (movesString.includes(pattern)) {
-
-
+            highlightWinningBoxes(pattern)
             return true
         }
-
     }
-
-
-
-
-
-
 }
 
-
-
-
-
-
-
-
-
-// ---------------------------Notes for Next time -------------------------//
-
-/* events looking at each id on each box
-
-so we need clicks and listeners
-
-this can be cloned */
+// Highlight boxes with winning Xs or Os
+function highlightWinningBoxes(pattern) {
+    winningBoxes = pattern.split(',')
+    for (box of winningBoxes) {
+        document.getElementById(box).style.backgroundColor = 'red'
+    }
+}
