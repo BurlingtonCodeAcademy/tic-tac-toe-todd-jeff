@@ -1,18 +1,18 @@
 // Global Variables to setup game
 let players = []
-let turn = 0
-let winningPattern = ''
+let turn = 0  // 0 is X, 1 is O
+let gameMode = ''
 
 // Use arrays to record the moves that each player makes
 let xMoves = []
 let oMoves = []
 
-
-
-// get DOM object associated with start button, status area, timer
+// get DOM object associated with start button, status area, timer and game mode (player v player or player v computer)
 let startButton = document.getElementById('start')
 let statusText = document.getElementById('status-text')
 let timer = document.getElementById('timer')
+let playerMode = document.getElementById('Player-vs-Player')
+let pcMode = document.getElementById('Player-vs-Comp')
 
 // get collection of DOM objects associated with each box on grid 
 let boxes = document.getElementsByClassName('cell')
@@ -20,27 +20,28 @@ let boxes = document.getElementsByClassName('cell')
 // setup listener on start button to detect click
 startButton.addEventListener('click', startGame)
 
-// setup strings that will be used to check to see if player has won
+// setup strings that will be used to track where boxes where Xs and Os are placed
 let oMovesString = null;
 let xMovesString = null;
 
 // setup var for elapsed time
 let elapsedTime = null;
-let gameMode = ''
-let playerMode = document.getElementById('Player-vs-Player')
-let pcMode = document.getElementById('Player-vs-Comp')
+
 
 function startGame() {
-
-    // Set turn so X player goes first and 
-    turn = 0
-
-    // This is how we determine game mode - player vs player or player vs computer
+    // set variable so we know game mode - i.e. player vs player or player vs computer
     gameMode = document.querySelector('input[name=game-mode]:checked').value
+
+    // disable radio buttons and start button so player can't change during game
     playerMode.disabled = true;
     pcMode.disabled = true;
+    startButton.disabled = true
+
     // set player names based on input
     players[0] = document.getElementById('x-player').value
+
+    // Set turn so X player goes first  
+    turn = 0
 
     // Computer Assignment if playing VS computer 
     if (gameMode === 'PvC') {
@@ -63,23 +64,19 @@ function startGame() {
     xMoves = []
     oMoves = []
 
+    // add event listeners
     for (boxElement of boxes) {
-        boxElement.removeEventListener('click', markBox)
-        boxElement.innerHTML = ''
         boxElement.addEventListener('click', markBox)
         boxElement.style.backgroundColor = 'lightcyan'
+        boxElement.innerHTML = ''
     }
 
     // Setup timer to show elapsed time of game
     var startDate = new Date()
-    elapsedTime = window.setInterval(updateElapsedTime, 1000, startDate)
-
-    // disable start button
-    startButton.disabled = true
+    elapsedTime = window.setInterval(updateElapsedTime, 1000, startDate)   
 }
 
 function markBox(evt) {
-
     // Prevent player from trying to pick a box that is already filled
     if (evt.target.innerText !== '') {
         statusText.innerText = 'Please pick a vacant cell'
@@ -90,15 +87,18 @@ function markBox(evt) {
     evt.target.innerText = (turn === 0 ? 'X' : 'O')
 
     switch (gameMode) {
+
+        // Player versus Player
         case 'PvP':
-            console.log('in player mode')
+
+            // Save move of player
             if (turn === 0) {
                 xMoves.push(evt.target.getAttribute('id'))
             } else {
                 oMoves.push(evt.target.getAttribute('id'))
             }
 
-
+            // Check for draw or win
             if ((xMoves.length === 5 && oMoves.length === 4) &&
                 checkWin() === false) {
                 statusText.innerHTML = 'Whoops! It\'s a tie!'
@@ -109,13 +109,13 @@ function markBox(evt) {
                 statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
                 resetGame()
                 return;
-            } else {
+            } else {  // if not draw or win, switch player
                 turn = (turn === 0) ? 1 : 0
                 statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
                 break;
             }
 
-        // toggle player turn
+        // Player versus Computer
         case 'PvC':
             // record human players move
             xMoves.push(evt.target.getAttribute('id'))
@@ -123,6 +123,7 @@ function markBox(evt) {
             // check for human win or draw
             if (checkWin()) {
                 statusText.innerHTML = 'Player ' + players[0] + ' is the winner!'
+                resetGame()
             }
             else if ((xMoves.length === 5 && oMoves.length === 4) &&
                 (checkWin() === false)) {
@@ -151,6 +152,7 @@ function markBox(evt) {
     }
 }
 
+// game is over reset timer, buttons, listeners
 function resetGame() {
     window.clearInterval(elapsedTime)
     playerMode.disabled = false
@@ -178,7 +180,6 @@ function computerMove() {
 
         }
     }
-
     return randMoves;
 }
 
@@ -191,12 +192,10 @@ function checkWin() {
             '1,4,7', '2,5,8', '3,6,9',  // vertical wins
             '1,5,9', '3,5,7']           // diagonal winds
 
-
     let winPattern = ''
     let xCounter = 0
     let oCounter = 0
     let docElement = ''
-
 
     for (element of winningPatterns) {
 
