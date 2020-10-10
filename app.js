@@ -13,6 +13,8 @@ let statusText = document.getElementById('status-text')
 let timer = document.getElementById('timer')
 let playerMode = document.getElementById('Player-vs-Player')
 let pcMode = document.getElementById('Player-vs-Comp')
+let xPlayerName = document.getElementById('x-player')
+let oPlayerName = document.getElementById('o-player')
 
 // get collection of DOM objects associated with each box on grid 
 let boxes = document.getElementsByClassName('cell')
@@ -36,9 +38,11 @@ function startGame() {
     playerMode.disabled = true;
     pcMode.disabled = true;
     startButton.disabled = true
+    xPlayerName.disabled = true
+    oPlayerName.disabled = true
 
     // set player names based on input
-    players[0] = document.getElementById('x-player').value
+    players[0] = xPlayerName.value
 
     // Set turn so X player goes first  
     turn = 0
@@ -46,9 +50,9 @@ function startGame() {
     // Computer Assignment if playing VS computer 
     if (gameMode === 'PvC') {
         players[1] = 'Computer'
-        document.getElementById('o-player').value = 'Computer'
+        oPlayerName = 'Computer'
     } else {
-        players[1] = document.getElementById('o-player').value
+        players[1] = oPlayerName.value
     }
 
     // Set Status Text so players know whos turn it is
@@ -106,7 +110,7 @@ function markBox(evt) {
                 return;
             } else if ((xMoves.length > 0 && checkWin())) {
                 // Display winner name in status area, stop timer & re-enable start button
-                statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
+                statusText.innerHTML = players[turn] + ' is the winner!'
                 resetGame()
                 return;
             } else {  // if not draw or win, switch player
@@ -122,7 +126,7 @@ function markBox(evt) {
 
             // check for human win or draw
             if (checkWin()) {
-                statusText.innerHTML = 'Player ' + players[0] + ' is the winner!'
+                statusText.innerHTML = players[0] + ' is the winner!'
                 resetGame()
             }
             else if ((xMoves.length === 5 && oMoves.length === 4) &&
@@ -138,7 +142,7 @@ function markBox(evt) {
 
                 // check for win or draw
                 if (checkWin()) {
-                    statusText.innerHTML = 'Player ' + players[1] + ' is the winner!'
+                    statusText.innerHTML = players[1] + ' is the winner!'
                     resetGame()
                 }
                 else if ((xMoves.length === 5 && oMoves.length === 4) &&
