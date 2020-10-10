@@ -30,24 +30,18 @@ let xMovesString = null;
 
 // setup var for elapsed time
 let elapsedTime = null;
-
-
 let gameMode = ''
 
-
-
 function startGame() {
-
 
     // Set turn so X player goes first and 
     turn = 0
 
-    // This is how we determine game mode
+    // This is how we determine game mode - player vs player or player vs computer
     gameMode = document.querySelector('input[name=game-mode]:checked').value
 
     // set player names based on input
     players[0] = document.getElementById('x-player').value
-    console.log(gameMode)
 
     // Computer Assignment if playing VS computer 
     if (gameMode === 'PvC') {
@@ -86,69 +80,85 @@ function startGame() {
 }
 
 function markBox(evt) {
-    console.log('at top')
+
     // Prevent player from trying to pick a box that is already filled
     if (evt.target.innerText !== '') {
         statusText.innerText = 'Please pick a vacant cell'
         return
     }
-    /* if (players[1] === 'Computer' && turn === 1) {
-     let randMoves = randNum(9)
-     console.log(randMoves)
-     compMoves = document.getElementById(randMoves.toString()).innerText = 'O'
-     console.log(compMoves)
-     } else {
- */
+
     // Fill in box with X or O based on which player
     evt.target.innerText = (turn === 0 ? 'X' : 'O')
 
-    // store player moves in array so we can use to check for win condition
-    if (turn === 0) {
-        xMoves.push(evt.target.getAttribute('id'))
-    } else {
-        oMoves.push(evt.target.getAttribute('id'))
-    }``
+    switch (gameMode) {
+        case 'PvP':
 
-    // Check for win condition
-    if ((xMoves.length > 0 && checkWin(xMoves)) ||
-        (oMoves.length > 0 && checkWin(oMoves))) {
+            if (turn === 0) {
+                xMoves.push(evt.target.getAttribute('id'))
+            } else {
+                oMoves.push(evt.target.getAttribute('id'))
+            }
 
-        // Display winner name in status area and re-enable start button
-        statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
+            if ((xMoves.length > 0 && checkWin(xMoves)) ||
+                (oMoves.length > 0 && checkWin(oMoves))) {
 
-        window.clearInterval(elapsedTime)
-        startButton.disabled = false;
+                // Display winner name in status area, stop timer & re-enable start button
+                statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
+                window.clearInterval(elapsedTime)
+                startButton.disabled = false;
+                return;
+            }
 
+            // toggle player turn
+            turn = (turn === 0) ? 1 : 0
+            break;
+
+        case 'PvC':
+            // record human players move and check for win
+            xMoves.push(evt.target.getAttribute('id'))
+            if (xMoves.length > 0 && checkWin(xMoves)) {
+                statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
+                window.clearInterval(elapsedTime)
+                startButton.disabled = false
+                return;
+            }
+
+            // execute computer move, record it and check for win, set turn back to human player
+            compBoxTaken = computerMove()
+            oMoves.push(document.getElementById(compBoxTaken.toString()).getAttribute('id'))
+          
+            if (oMoves.length > 0 && checkWin(oMoves)) {
+                statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
+                window.clearInterval(elapsedTime)
+                startButton.disabled = false
+                return
+            }
+            turn = 0
+            break
     }
-    // If not in a win condition, Update turn to next player
-    else if (turn === 0) {
-        turn = 1;
-        statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
-    } else {
-        turn = 0;
-        statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
-    }
-    if (gameMode === 'PvC') {
-        computerMove();
-    }
 
-    console.log('at bottom')
+    // Fill status to indicate which player should move next
+    statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
+
 }
 
+// Use random number loop to find empty cell for computer move
 function computerMove() {
 
-    let randMoves = randNum(9)
-    console.log()
-    console.log(document.getElementById(randMoves.toString()).innerText)
-    if (document.getElementById(randMoves.toString()).innerText === '') {
-        compMoves = document.getElementById(randMoves.toString()).innerText = 'O'
+    let randMoves = randNum()
+    let lookForMove = true;
 
-        console.log(compMoves)
+    while (lookForMove) {
+        if (document.getElementById(randMoves.toString()).innerText === '') {
+            compMoves = document.getElementById(randMoves.toString()).innerText = 'O'
+            lookForMove = false;
+        }
+        else {
+            randMoves = randNum()
+        }
     }
+    return randMoves;
 }
-
-
-
 
 // Check to see if player move combinations match one of the winning move combinations
 function checkWin(movesString) {
@@ -186,9 +196,13 @@ function updateElapsedTime(startTime) {
 }
 
 
-function randNum(max) {
-    rand = Math.floor(Math.random() * Math.floor(max))
+function randNum() {
+    let randomNum = (Math.floor(Math.random() * 9))
 
-
-    return rand
+    if (randomNum > 0) {
+        return randomNum
+    }
+    else {
+        return 1;
+    }
 }
