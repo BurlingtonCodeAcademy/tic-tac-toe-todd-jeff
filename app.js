@@ -31,6 +31,8 @@ let xMovesString = null;
 // setup var for elapsed time
 let elapsedTime = null;
 let gameMode = ''
+let playerMode = document.getElementById('Player-vs-Player')
+let pcMode = document.getElementById('Player-vs-Comp')
 
 function startGame() {
 
@@ -39,7 +41,8 @@ function startGame() {
 
     // This is how we determine game mode - player vs player or player vs computer
     gameMode = document.querySelector('input[name=game-mode]:checked').value
-
+    playerMode.disabled = true;
+    pcMode.disabled = true;
     // set player names based on input
     players[0] = document.getElementById('x-player').value
 
@@ -98,20 +101,34 @@ function markBox(evt) {
             } else {
                 oMoves.push(evt.target.getAttribute('id'))
             }
+            console.log(xMoves.length)
+            console.log(oMoves.length)
+            if ((xMoves.length === 5 && checkWin(xMoves) === false) || (oMoves.length === 4 && checkWin(oMoves) === false)) {
 
-            if ((xMoves.length > 0 && checkWin(xMoves)) ||
+                statusText.innerHTML = 'Whoops! It\'s a tie!'
+                window.clearInterval(elapsedTime)
+                startButton.disabled = false;
+                return;
+            } else if ((xMoves.length > 0 && checkWin(xMoves)) ||
                 (oMoves.length > 0 && checkWin(oMoves))) {
 
                 // Display winner name in status area, stop timer & re-enable start button
                 statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
                 window.clearInterval(elapsedTime)
+                playerMode.disabled = false;
+                pcMode.disabled = false;
                 startButton.disabled = false;
                 return;
+
+            } else {
+                turn = (turn === 0) ? 1 : 0
+                break;
             }
 
-            // toggle player turn
-            turn = (turn === 0) ? 1 : 0
-            break;
+
+
+        // toggle player turn
+
 
         case 'PvC':
             // record human players move and check for win
@@ -119,6 +136,8 @@ function markBox(evt) {
             if (xMoves.length > 0 && checkWin(xMoves)) {
                 statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
                 window.clearInterval(elapsedTime)
+                playerMode.disabled = false
+                pcMode.disabled = false
                 startButton.disabled = false
                 return;
             }
@@ -126,15 +145,22 @@ function markBox(evt) {
             // execute computer move, record it and check for win, set turn back to human player
             compBoxTaken = computerMove()
             oMoves.push(document.getElementById(compBoxTaken.toString()).getAttribute('id'))
-          
-            if (oMoves.length > 0 && checkWin(oMoves)) {
+            if ((xMoves.length === 5 && checkWin(xMoves) === false) || (oMoves.length === 4 && checkWin(oMoves) === false)) {
+
+                statusText.innerHTML = 'Whoops! It\'s a tie!'
+                window.clearInterval(elapsedTime)
+                startButton.disabled = false;
+                return;
+            } else if (oMoves.length > 0 && checkWin(oMoves)) {
                 statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
                 window.clearInterval(elapsedTime)
+                playerMode.disabled = false;
+                pcMode.disabled = false; 
                 startButton.disabled = false
                 return
-            }
+            } else {
             turn = 0
-            break
+            }    
     }
 
     // Fill status to indicate which player should move next
@@ -170,7 +196,8 @@ function checkWin(movesString) {
             highlightWinningBoxes(pattern)
             return true
         }
-    }
+    } 
+    return false
 }
 
 // Highlight boxes with winning Xs or Os
@@ -195,7 +222,7 @@ function updateElapsedTime(startTime) {
     timer.innerHTML = 'Time Elapsed: ' + seconds + ' seconds'
 }
 
-
+// Random Number Generator
 function randNum() {
     let randomNum = (Math.floor(Math.random() * 9))
 
