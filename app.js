@@ -7,11 +7,7 @@ let winningPattern = ''
 let xMoves = []
 let oMoves = []
 
-// use array to track winning box combinations
-let winningPatterns =
-    ['1,2,3', '4,5,6', '7,8,9',     // horizontal wins
-        '1,4,7', '2,5,8', '3,6,9',  // vertical wins
-        '1,5,9', '3,5,7']           // diagonal winds
+
 
 // get DOM object associated with start button, status area, timer
 let startButton = document.getElementById('start')
@@ -95,77 +91,75 @@ function markBox(evt) {
 
     switch (gameMode) {
         case 'PvP':
-
+            console.log('in player mode')
             if (turn === 0) {
                 xMoves.push(evt.target.getAttribute('id'))
             } else {
                 oMoves.push(evt.target.getAttribute('id'))
             }
-            console.log(xMoves.length)
-            console.log(oMoves.length)
-            if ((xMoves.length === 5 && checkWin(xMoves) === false) || (oMoves.length === 4 && checkWin(oMoves) === false)) {
 
+
+            if ((xMoves.length === 5 && oMoves.length === 4) &&
+                checkWin() === false) {
                 statusText.innerHTML = 'Whoops! It\'s a tie!'
-                window.clearInterval(elapsedTime)
-                startButton.disabled = false;
+                resetGame()
                 return;
-            } else if ((xMoves.length > 0 && checkWin(xMoves)) ||
-                (oMoves.length > 0 && checkWin(oMoves))) {
-
+            } else if ((xMoves.length > 0 && checkWin())) {
                 // Display winner name in status area, stop timer & re-enable start button
                 statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
-                window.clearInterval(elapsedTime)
-                playerMode.disabled = false;
-                pcMode.disabled = false;
-                startButton.disabled = false;
+                resetGame()
                 return;
-
             } else {
                 turn = (turn === 0) ? 1 : 0
+                statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
                 break;
             }
 
-
-
         // toggle player turn
-
-
         case 'PvC':
-            // record human players move and check for win
+            // record human players move
             xMoves.push(evt.target.getAttribute('id'))
-            if (xMoves.length > 0 && checkWin(xMoves)) {
-                statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
-                window.clearInterval(elapsedTime)
-                playerMode.disabled = false
-                pcMode.disabled = false
-                startButton.disabled = false
+
+            // check for human win or draw
+            if (checkWin()) {
+                statusText.innerHTML = 'Player ' + players[0] + ' is the winner!'
+            }
+            else if ((xMoves.length === 5 && oMoves.length === 4) &&
+                (checkWin() === false)) {
+                statusText.innerHTML = 'Whoops! It\'s a tie!'
+                resetGame()
                 return;
             }
+            else {
+                // execute computer move, record it 
+                compBoxTaken = computerMove()
+                oMoves.push(document.getElementById(compBoxTaken.toString()).getAttribute('id'))
 
-            // execute computer move, record it and check for win, set turn back to human player
-            compBoxTaken = computerMove()
-            oMoves.push(document.getElementById(compBoxTaken.toString()).getAttribute('id'))
-            if ((xMoves.length === 5 && checkWin(xMoves) === false) || (oMoves.length === 4 && checkWin(oMoves) === false)) {
-
-                statusText.innerHTML = 'Whoops! It\'s a tie!'
-                window.clearInterval(elapsedTime)
-                startButton.disabled = false;
-                return;
-            } else if (oMoves.length > 0 && checkWin(oMoves)) {
-                statusText.innerHTML = 'Player ' + players[turn] + ' is the winner!'
-                window.clearInterval(elapsedTime)
-                playerMode.disabled = false;
-                pcMode.disabled = false; 
-                startButton.disabled = false
-                return
-            } else {
-            turn = 0
-            }    
+                // check for win or draw
+                if (checkWin()) {
+                    statusText.innerHTML = 'Player ' + players[1] + ' is the winner!'
+                    resetGame()
+                }
+                else if ((xMoves.length === 5 && oMoves.length === 4) &&
+                    (checkWin() === false)) {
+                    statusText.innerHTML = 'Whoops! It\'s a tie!'
+                    resetGame()
+                } else {
+                    statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
+                }
+            }
     }
+}
 
-    // Fill status to indicate which player should move next
-    statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
+function resetGame() {
+    window.clearInterval(elapsedTime)
+    playerMode.disabled = false
+    pcMode.disabled = false
+    startButton.disabled = false
 
+    for (boxElement of boxes) {
+        boxElement.removeEventListener('click', markBox)
+    }
 }
 
 // Use random number loop to find empty cell for computer move
@@ -181,30 +175,73 @@ function computerMove() {
         }
         else {
             randMoves = randNum()
+
         }
     }
+
     return randMoves;
 }
 
 // Check to see if player move combinations match one of the winning move combinations
-function checkWin(movesString) {
-    movesString.sort()
-    let checkString = movesString.toString()
+function checkWin() {
 
-    for (pattern of winningPatterns) {
-        if (checkString.includes(pattern)) {
-            highlightWinningBoxes(pattern)
+    // use array to track winning box combinations
+    let winningPatterns =
+        ['1,2,3', '4,5,6', '7,8,9',     // horizontal wins
+            '1,4,7', '2,5,8', '3,6,9',  // vertical wins
+            '1,5,9', '3,5,7']           // diagonal winds
+
+
+    let winPattern = ''
+    let xCounter = 0
+    let oCounter = 0
+    let docElement = ''
+
+
+    for (element of winningPatterns) {
+
+        // Create array of elements representing 3 boxes that are a win combo
+        winPattern = element.split(",")
+
+        // loop and check to see if there are 3 Xs or Os present
+        for (element of winPattern) {
+            docElement = document.getElementById(element.toString()).innerHTML
+
+            if (docElement === 'X') {
+                xCounter += 1
+            }
+            else if (docElement === 'O') {
+                oCounter += 1
+            }
+            else {
+                break;
+            }
+        }
+
+        // if 3 Xs or 3 Os we have a winner and return true
+        if (xCounter === 3) {
+            highlightWinningBoxes(winPattern)
             return true
         }
-    } 
+        else if (oCounter === 3) {
+            highlightWinningBoxes(winPattern)
+            return true
+        }
+        else {  // Otherwise reset the counts before checking the next set of 3 boxes that are a win combination
+            xCounter = 0
+            oCounter = 0
+        }
+    }
+
+    // Return false if after checking all win box combinations there is no winner
     return false
 }
 
 // Highlight boxes with winning Xs or Os
-function highlightWinningBoxes(pattern) {
-    winningBoxes = pattern.split(',')
-    for (box of winningBoxes) {
-        document.getElementById(box).style.backgroundColor = 'red'
+function highlightWinningBoxes(winningBoxes) {
+
+    for (element of winningBoxes) {
+        document.getElementById(element).style.backgroundColor = 'red'
     }
 }
 
