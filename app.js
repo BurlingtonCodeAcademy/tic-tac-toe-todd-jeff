@@ -85,7 +85,7 @@ function markBox(evt) {
         xMoves.push(evt.target.getAttribute('id'))
     } else {
         oMoves.push(evt.target.getAttribute('id'))
-    }
+    }``
 
     // Check for win condition
     if ((xMoves.length > 0 && checkWin(xMoves)) ||
