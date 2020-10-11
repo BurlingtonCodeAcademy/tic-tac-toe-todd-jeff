@@ -59,7 +59,7 @@ function startGame() {
 
     // Set Status Text so players know whos turn it is
     if (players[0] !== '' && players[1] !== '') {
-        statusText.innerHTML = 'It\'s ' + players[turn] + ' turn'
+        statusText.innerHTML = 'It\'s ' + players[turn] + '\'s turn'
     }
     else {
         statusText.innerHTML = 'You must fill in the players names before you can play!'
@@ -117,7 +117,7 @@ function markBox(evt) {
                 return;
             } else {  // if not draw or win, switch player
                 turn = (turn === 0) ? 1 : 0
-                statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
+                statusText.innerHTML = 'It\'s ' + players[turn] + '\'s turn!'
                 break;
             }
 
@@ -152,7 +152,7 @@ function markBox(evt) {
                     statusText.innerHTML = 'Whoops! It\'s a tie!'
                     resetGame()
                 } else {
-                    statusText.innerHTML = 'It\'s ' + players[turn] + ' turn!'
+                    statusText.innerHTML = 'It\'s ' + players[turn] + '\'s turn!'
                 }
             }
     }
