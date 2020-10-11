@@ -15,12 +15,14 @@ let playerMode = document.getElementById('Player-vs-Player')
 let pcMode = document.getElementById('Player-vs-Comp')
 let xPlayerName = document.getElementById('x-player')
 let oPlayerName = document.getElementById('o-player')
+let newGame = document.getElementById('new-game')
 
 // get collection of DOM objects associated with each box on grid 
 let boxes = document.getElementsByClassName('cell')
 
 // setup listener on start button to detect click
 startButton.addEventListener('click', startGame)
+newGame.addEventListener('click', refreshGame)
 
 // setup strings that will be used to track where boxes where Xs and Os are placed
 let oMovesString = null;
@@ -50,7 +52,7 @@ function startGame() {
     // Computer Assignment if playing VS computer 
     if (gameMode === 'PvC') {
         players[1] = 'Computer'
-        oPlayerName = 'Computer'
+        oPlayerName.value = 'Computer'
     } else {
         players[1] = oPlayerName.value
     }
@@ -162,7 +164,8 @@ function resetGame() {
     playerMode.disabled = false
     pcMode.disabled = false
     startButton.disabled = false
-
+    oPlayerName.disabled = false
+    xPlayerName.disabled = false
     for (boxElement of boxes) {
         boxElement.removeEventListener('click', markBox)
     }
@@ -272,4 +275,8 @@ function randNum() {
     else {
         return 1;
     }
+}
+// New Game Function 
+function refreshGame() {
+    window.location.reload();
 }
