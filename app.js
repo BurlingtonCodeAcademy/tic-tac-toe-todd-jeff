@@ -73,7 +73,7 @@ function startGame() {
     // add event listeners
     for (boxElement of boxes) {
         boxElement.addEventListener('click', markBox)
-        boxElement.style.backgroundColor = 'lightcyan'
+        boxElement.style.backgroundColor = 'orangered'
         boxElement.innerHTML = ''
     }
 
@@ -247,7 +247,7 @@ function checkWin() {
 function highlightWinningBoxes(winningBoxes) {
 
     for (element of winningBoxes) {
-        document.getElementById(element).style.backgroundColor = 'red'
+        document.getElementById(element).style.backgroundColor = 'black'
     }
 }
 
