@@ -19,7 +19,7 @@ body {
 
 #game-wrapper {
     display: flex;
-    height: 180vh;
+    height: 45vh;
     width: 100vw; 
     justify-content: center;
 }
@@ -29,7 +29,7 @@ body {
     display: flex;
     justify-content: center;
     
-    height: 15vh;
+    height: 10vh;
     width: 100vw;
     align-items: center; 
 }
@@ -43,7 +43,7 @@ h1 {
 /* this is our player selector box */
 #player-wrapper {
     display: flex;
-    height: 30vh;
+    height: 10vh;
     width: 73vw;
     place-content: start center;
     align-items: center;
@@ -67,7 +67,7 @@ h1 {
     align-items: center;
     width: 55vw;
     
-   height: 20vh; 
+   height: 10vh; 
    
    
 }
@@ -83,7 +83,7 @@ h1 {
 
 #main-game-container {
     display: flex;
-    height: 150vh;
+    height: 80vh;
     width: 60vw;
     justify-content: flex-start;
    flex-direction: column;
@@ -130,7 +130,7 @@ h1 {
     display: flex;
     justify-content: center;
     align-content: space-between;
-    height: 10vh;
+    height: 5vh;
     width: 60vw;
     align-items: space-between;
     
