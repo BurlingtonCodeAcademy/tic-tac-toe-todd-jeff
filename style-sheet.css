@@ -1,0 +1,137 @@
+/* general page layout and fonts */
+@import url('https://fonts.googleapis.com/css?family=Berkshire Swash');
+
+* {
+    margin: 0;
+    font-size: 24pt;
+    font-weight: bold;
+    font-family: 'Berkshire Swash', sans-serif;
+    color: #071F19;
+    
+    
+/* background image */
+}
+body {
+   background-image: url(https://i.imgur.com/Qsmfqh8.jpg);
+   
+}
+
+
+#game-wrapper {
+    display: flex;
+    height: 45vh;
+    width: 100vw; 
+    justify-content: center;
+}
+
+/*this is our header*/
+#header-container {
+    display: flex;
+    justify-content: center;
+    
+    height: 10vh;
+    width: 100vw;
+    align-items: center; 
+}
+
+h1 {
+    margin-top: 1vw;
+    padding-bottom: 2vw;
+    font-size: 40pt;
+    align-content: end;
+}
+/* this is our player selector box */
+#player-wrapper {
+    display: flex;
+    height: 10vh;
+    width: 73vw;
+    place-content: start center;
+    align-items: center;
+
+}
+#player-container {
+    display: flex;
+    height: 10vh;
+    width: 33%; 
+   
+    flex-direction: column;
+     margin-bottom: 40px; 
+}
+
+
+
+#Player-vs-Comp-selector {
+    display: flex;
+    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+    width: 55vw;
+    
+   height: 10vh; 
+   
+   
+}
+
+.name-field-container {
+    display: flex;
+    justify-content: space-around;
+    font-weight: bold;
+
+}
+
+/* this is our board and it's containers*/
+
+#main-game-container {
+    display: flex;
+    height: 80vh;
+    width: 60vw;
+    justify-content: flex-start;
+   flex-direction: column;
+    
+}
+
+
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: 61vh;
+    width: 61vw;
+    background-color: #C8D600;
+    justify-items: center;
+}
+
+/*Each class of cell */
+.cell {
+    display: flex;
+    border: 1px solid black;
+    height: 20vh;
+    width: 20vw;
+    align-items: center;
+    justify-content: center;
+    font-size: 70pt;
+    color: #C8D600
+}
+
+/* status box that displays text*/
+#status-text {
+    display: flex;
+    height: 10vh;
+    width: 61vw;
+    font-size: 30px;
+    justify-content: center;
+    align-items: center;
+    
+    background-color: #C8D600
+}
+
+/* buttons box */
+#button-container {
+    display: flex;
+    justify-content: center;
+    align-content: space-between;
+    height: 5vh;
+    width: 60vw;
+    align-items: space-between;
+    
+}
